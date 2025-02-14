@@ -17,7 +17,7 @@ class DriveRosBridge(Node):
         self.command_sampling_strategy = RandomSampling()
         self.drive = Drive(self.robot, self.command_sampling_strategy, step_duration_s=3.0)
 
-        self.cmd_pub = self.create_publisher(Twist, "cmd_vel", 10)
+        self.cmd_pub = self.create_publisher(Twist, "cmd_drive", 10)
 
         self.timer = self.create_timer(0.1, self.control_loop)
 
@@ -33,6 +33,9 @@ class DriveRosBridge(Node):
     def control_loop(self):
         current_time_ns = self.get_clock().now().nanoseconds
         self.drive.run(current_time_ns)
+
+    def loc_callback(self, pose):
+        self.robot.pose_callback(pose)
 
 
 def main(args=None):
